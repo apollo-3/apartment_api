@@ -1,4 +1,4 @@
-HOME_DIR='/var/grape'
+HOME_DIR='/var/apartment_api'
 
 cd $HOME_DIR
 mkdir -p logs
