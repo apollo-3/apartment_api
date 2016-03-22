@@ -20,9 +20,9 @@ class Users
     obj = @db.con[:users].find({:mail => mail, :token => token})    
     if obj.count >= 1
       if obj.first[:token] == token
-        return "{'success': 'ok'}"
+        return {'success' => 'ok'}
       else
-       return "{'error': \'#{MSGS['bad_token']['en']}\'}"
+       return {'error' => MSGS['bad_token']['en']}
       end
     end
   end
@@ -32,12 +32,12 @@ class Users
       obj = obj.first
       if obj[:password] == user[:password]
         token = setToken user[:mail]
-        return "{'success': 'ok', 'token': \'#{token}\'}"
+        return {'success' => 'ok', 'token' => token}
       else
-        return "{'error': \'#{MSGS['bad_user']['en']}\'}"
+        return {'error' => MSGS['bad_user']['en']}
       end
     else
-        return "{'error': \'#{MSGS['no_such_mail']['en']}\'}"
+        return {'error' => MSGS['no_such_mail']['en']}
     end
     @db.close
   end
