@@ -46,7 +46,12 @@ class Users
       if obj[:password] == user[:password]
         if obj[:verified]
           token = setToken user[:mail]
-          resp = {'success' => 'ok', 'token' => token, 'lang' => obj[:lang]}
+          obj.delete '_id'
+          obj.delete 'creation_date'
+          obj.delete 'verified'
+          obj.delete 'password'
+          obj.delete 'token'
+          resp = {'success' => 'ok', 'token' => token, 'user' => obj}
         else
           resp = {'error' => MSGS['not_verified'][obj[:lang]]}
         end
@@ -69,9 +74,14 @@ class Users
   def delUser user
     resp = nil
     valid_token = checkToken(user[:mail], user[:token])
-    if valid_token.has_key?('success')    
-      @db.con[:users].find(:mail => user[:mail]).delete_one
-      resp = {'success' => MSGS['user_deleted'][@def_lang]}
+    if valid_token.has_key?('success')
+      obj = @db.con[:users].find({:mail => user[:mail], :password => user[:password]})
+      if obj.count < 1
+        resp = {'error' => MSGS['bad_pass'][@def_lang]}
+      else
+        @db.con[:users].find(:mail => user[:mail]).delete_one
+        resp = {'success' => MSGS['user_deleted'][@def_lang]}
+      end
     else
       resp = valid_token
     end
@@ -135,7 +145,7 @@ class Users
     resp = valid_token
     if valid_token.has_key?('success')
       password = Random.rand(10000).to_s
-      @db.con[:users].find(:mail => mail).update_one({'$set' => {'password' => password}})
+      @db.con[:users].find(:mail => mail).update_one({'$set' => {'password' => Digest::MD5.hexdigest(password)}})
       resp = {'success' => "#{MSGS['temp_password'][@def_lang]} #{password}"}
     end
     @db.close

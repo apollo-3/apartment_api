@@ -63,5 +63,17 @@ class Login < Grape::API
       end
     end
     
+    params do
+      requires :user, type: Hash do
+        requires :mail, type: String
+        requires :token, type: String
+        requires :password, type: String
+      end
+    end
+    delete '/delete' do
+      client = Users.new
+      return client.delUser params[:user]
+    end
+    
   end
 end
