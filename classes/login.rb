@@ -9,11 +9,11 @@ class Login < Grape::API
       requires :user, type: Hash do
         requires :mail, type: String
         requires :password, type: String
+        requires :defLang, type: String
       end
     end
     post '/login' do
-      status 200
-      client = Users.new
+      client = Users.new params[:user][:defLang]
       return client.login params[:user]
     end
 
@@ -21,10 +21,11 @@ class Login < Grape::API
       requires :user, type: Hash do
         requires :mail, type: String
         requires :token, type: String
+        requires :defLang, type: String
       end
     end    
     post '/logout' do
-      client = Users.new
+      client = Users.new params[:user][:defLang]
       client.logout params[:user]
     end
 
@@ -32,19 +33,20 @@ class Login < Grape::API
       requires :user, type: Hash do
         requires :mail, type: String
         requires :password, type: String
-        requires :lang, type: String
+        requires :defLang, type: String
       end
     end
     post '/register' do
-      client = Users.new
+      client = Users.new params[:user][:defLang]
       return client.newUser params[:user]
     end
     
     params do
       requires :mail, type: String
+      requires :defLang, type: String
     end
     post '/reqreset' do
-      client = Users.new
+      client = Users.new params[:defLang]
       return client.requestReset params[:mail]
     end
 
@@ -52,9 +54,10 @@ class Login < Grape::API
       requires :mail, type: String
       requires :token, type: String
       requires :action, type: String
+      requires :defLang, type: String
     end
     get '/verify' do
-      client = Users.new
+      client = Users.new params[:defLang]
       case params[:action]
       when 'verify'
         resp = client.setVerified params[:mail], params[:token]
@@ -68,11 +71,35 @@ class Login < Grape::API
         requires :mail, type: String
         requires :token, type: String
         requires :password, type: String
+        requires :defLang, type: String
       end
     end
     delete '/delete' do
-      client = Users.new
+      client = Users.new params[:user][:defLang]
       return client.delUser params[:user]
+    end
+    
+    params do
+      requires :user, type: Hash do
+        requires :mail, type: String
+        requires :token, type: String
+        requires :password, type: String
+        requires :defLang, type: String        
+      end
+    end
+    post '/update' do
+      client = Users.new params[:user][:defLang]
+      return client.updateUser params[:user]
+    end
+    
+    params do
+      requires :mail, type: String
+      requires :token, type: String
+      requires :defLang, type: String
+    end
+    post '/getData' do
+      client = Users.new params[:defLang]
+      return client.getData params[:mail], params[:token]
     end
     
   end
