@@ -92,6 +92,7 @@ class Users
     else
       user[:verified] = false
       user[:creation_date] = Time.now
+      user[:projects] = []
       @db.con[:users].insert_one(user)
       token = setToken user['mail']
       resp = {'success' => Helper.MSGS['user_created'][@def_lang], 'verifing_url' => Helper.VERIFY_URL + "?mail=#{user[:mail]}&token=#{token}&action=verify"}
@@ -162,5 +163,8 @@ class Users
   def getData mail, token
     @db.close
     return checkToken mail, token    
+  end
+  def closeDb
+    @db.close
   end
 end

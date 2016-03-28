@@ -16,9 +16,12 @@ class Helper
             'temp_password' => {'en' => 'Temporary password is', 'ru' => 'Временный пароль'},
             'cant_reset' => {'en' => 'You can\'t reset, cause user was not verified', 'ru' => 'Вы не можете сбросить пароль, так как пользователь пока не прошел проверку почты'},
             'pass_changed' => {'en' => 'Password changed', 'ru' => 'Пароль изменен'},
-            'unknown' => {'en' => 'Error is unknown', 'ru' => 'Неизвестная ошибка'}
+            'unknown' => {'en' => 'Error is unknown', 'ru' => 'Неизвестная ошибка'},
+            'project_saved' => {'en' => 'Project was saved successfully', 'ru' => 'Проект был сохранен'},
+            'project_deleted' => {'en' => 'Project was deleted', 'ru' => 'Проект был удален'}
          }
   @@TABLE_USERS = :users
+  @@TABLE_PROJECTS = :projects
   @@DB_NAME = 'apartments'
   
   # def self.toJSON doc
@@ -40,4 +43,7 @@ class Helper
   def self.DB_NAME
     return @@DB_NAME
   end     
+  def self.TABLE_PROJECTS
+    return @@TABLE_PROJECTS
+  end
 end
