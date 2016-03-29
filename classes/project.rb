@@ -31,6 +31,20 @@ class Project < Grape::API
     end
     
     params do
+      requires :project, type: Hash do
+        requires :mail, type: String
+        requires :token, type: String
+        requires :name, type: String       
+        requires :flats, type: Array[Hash]
+        requires :defLang, type: String
+      end      
+    end    
+    post '/createProject' do
+      client = Projects.new params[:project][:defLang]
+      return client.createProject params[:project]
+    end
+    
+    params do
       requires :mail, type: String
       requires :token, type: String
       requires :name, type: String

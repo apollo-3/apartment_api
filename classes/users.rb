@@ -160,6 +160,26 @@ class Users
     @db.close
     return resp
   end
+  def getAllUsers mail, token
+    resp = nil
+    valid_token = checkToken mail, token
+    if valid_token.has_key? 'success'
+      objs = @db.con[Helper.TABLE_USERS].find({:verified => true}).projection({:mail => 1, '_id' => 0})
+      if objs.count > 1
+        out = []
+        objs.each do |item|
+          out.push item[:mail]
+        end
+        resp = {'success' => 'ok', 'users' => out}
+      else
+        resp = {'error' => Helper.MSGS['unknown'][@def_lang]}
+      end
+    else
+      res = valid_token
+    end
+    @db.close
+    return resp
+  end
   def getData mail, token
     @db.close
     return checkToken mail, token    

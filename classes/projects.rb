@@ -1,5 +1,6 @@
 require_relative 'db'
 require_relative 'helper'
+require 'date'
 
 class Projects
   def initialize defLang
@@ -41,17 +42,14 @@ class Projects
     valid_token = client.checkToken mail, project[:token]
     client.closeDb
     if valid_token.has_key? 'success'
-      project.delete 'mail'
-      project.delete 'token'
-      project.delete 'defLang'      
-      project.delete 'was_shared' 
+      Projects.delExtraFields project
       oldName = project['name']
       if was_shared
         if project['shared']        
-          @db.con[Helper.TABLE_PROJECTS].update_one({:owners => mail, :project => project[:name]}, project)
+          @db.con[Helper.TABLE_PROJECTS].update_one({:owners => mail, :name => project[:name]}, project)
         else
+          project['name'] = getAvailableProjectName(mail, project['name'], project['shared'])        
           project['owners'] = [mail]
-          project['name'] = getAvailableProjectName(mail, project['name'], project['shared'])
           @db.con[Helper.TABLE_USERS].update_one({:mail => mail},{'$addToSet' => {'projects' => project}})
           @db.con[Helper.TABLE_PROJECTS].delete_one({:owners => mail, :name => oldName})
         end
@@ -72,15 +70,50 @@ class Projects
     @db.close
     return resp
   end
+  def createProject project
+    resp = {'error' => Helper.MSGS['unknown'][@def_lang]}
+    client = Users.new @def_lang
+    mail = project[:mail]    
+    valid_token = client.checkToken mail, project[:token]
+    client.closeDb
+    project[:creation_date] = Time.now
+    oldName = project['name']
+    project['name'] = getAvailableProjectName(mail, project['name'], project['shared'])    
+    if valid_token.has_key? 'success'
+      Projects.delExtraFields project
+      if project['shared'] 
+        project['owners'].push(mail) if !project['owners'].include?(mail)
+        @db.con[Helper.TABLE_PROJECTS].insert_one(project)
+      else
+        project['owners'] = [mail]
+        @db.con[Helper.TABLE_USERS].update_one({:mail => mail},{'$addToSet' => {:projects => project}})
+      end
+      resp = {'success' => Helper.MSGS['project_saved'][@def_lang], 'project' => project}
+    else
+      resp = valid_token['error']
+    end 
+    @db.close
+    return resp      
+  end
   def getAvailableProjectName mail, name, shared
     newName = name
     result = nil
+    stamp = Time.now.to_s.gsub(/-| |:|\+/ ,'')[0..-5];
+    dubls = 1    
     if shared
-      result = @db.con[Helper.TABLE_PROJECTS].find({:name => name})
+      result = @db.con[Helper.TABLE_PROJECTS].find({:name => Regexp.new(name)})
+      newName = "#{stamp}_#{result.count.to_i + 1}_#{name}" if result.count > 0
     else
-      result = @db.con[Helper.TABLE_USERS].find({:mail => mail, :projects => {:name => name}})
+      result = @db.con[Helper.TABLE_USERS].find({:mail => mail})
+      if result.count > 0
+        result.first['projects'].each do |item|
+          if Regexp.new(name).match(item[:name])!=nil
+            dubls = dubls + 1
+          end
+        end
+        newName = "#{stamp}_#{dubls}_#{name}" if dubls > 1
+      end
     end
-    newName = "#{result.count}_#{name}" if result.count > 1
     return newName
   end
   def delProject mail, token, name, shared

@@ -102,5 +102,15 @@ class Login < Grape::API
       return client.getData params[:mail], params[:token]
     end
     
+    params do
+      requires :mail, type: String
+      requires :token, type: String
+      requires :defLang, type: String 
+    end
+    post '/allUsers' do
+      client = Users.new params[:defLang]
+      return client.getAllUsers params[:mail], params[:token]
+    end       
+    
   end
 end
