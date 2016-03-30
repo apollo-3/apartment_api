@@ -85,6 +85,7 @@ class Users
   def newUser user
     user.delete 'defLang'    
     user['lang'] = @def_lang
+    user['currency'] = '$';
     resp = nil
     obj = @db.con[Helper.TABLE_USERS].find(:mail => user[:mail])
     if obj.count >= 1

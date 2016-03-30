@@ -1,6 +1,7 @@
 require_relative 'db'
 require_relative 'helper'
 require 'date'
+require 'time'
 
 class Projects
   def initialize defLang
@@ -41,6 +42,14 @@ class Projects
     was_shared = project[:was_shared]
     valid_token = client.checkToken mail, project[:token]
     client.closeDb
+    project['creation_date'] = Time.parse(project['creation_date'])
+    project['flats'].each do |flat|
+      if flat[:modified] == 'update'
+        flat[:modified] = Time.now
+      else
+        flat[:modified] = Time.parse flat[:modified]
+      end
+    end
     if valid_token.has_key? 'success'
       Projects.delExtraFields project
       oldName = project['name']
