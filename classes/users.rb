@@ -13,7 +13,8 @@ class Users
     obj.delete 'creation_date'
     obj.delete 'verified'
     obj.delete 'password'
-    obj.delete 'token'          
+    obj.delete 'token'  
+    obj.delete 'projects'
     return obj
   end
   def setToken mail
@@ -85,7 +86,6 @@ class Users
   def newUser user
     user.delete 'defLang'    
     user['lang'] = @def_lang
-    user['currency'] = '$';
     resp = nil
     obj = @db.con[Helper.TABLE_USERS].find(:mail => user[:mail])
     if obj.count >= 1
