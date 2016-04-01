@@ -23,6 +23,7 @@ class Helper
   @@TABLE_USERS = :users
   @@TABLE_PROJECTS = :projects
   @@DB_NAME = 'apartments'
+  @@IMG_FOLDER = '/var/apartment_ui/public/images/'
   
   # def self.toJSON doc
     # return doc.to_s.gsub('BSON::','').gsub('"','\'').gsub('=>',':')    
@@ -46,4 +47,7 @@ class Helper
   def self.TABLE_PROJECTS
     return @@TABLE_PROJECTS
   end
+  def self.IMG_FOLDER
+    return @@IMG_FOLDER
+  end  
 end
