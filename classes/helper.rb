@@ -1,3 +1,5 @@
+require 'rmagick'
+
 class Helper
   @@VERIFY_URL = 'http://192.168.33.11/verify.html'
   @@LANGS = ['en', 'ru']
@@ -50,4 +52,25 @@ class Helper
   def self.IMG_FOLDER
     return @@IMG_FOLDER
   end  
+  
+  def self.getTimeStamp
+    stamp = Time.now.to_s.gsub(/-| |:|\+/, '')[0..-5]
+    return stamp
+  end  
+  def self.resizeImage image
+    size = 400
+    img = Magick::Image.read(image).first
+    resized = img.resize_to_fit(size)
+    if img.columns > size
+      tempName = File.dirname(image) + '/M' + File.basename(image)
+      resized.write(tempName) do
+        self.quality = 100
+      end
+      File.delete image
+      File.rename(tempName, image)
+    end
+    img.destroy!
+    resized.destroy!    
+  end
+  
 end

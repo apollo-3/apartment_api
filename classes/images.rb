@@ -19,11 +19,12 @@ class Images
     if valid_token.has_key? 'success'
       tmp = image['tempfile']
       oldName = tmp.path.split('/').last
-      newName = 'BIG_' + mail + '_' + image['filename']
+      newName = mail + '_' + Helper.getTimeStamp + '_' + image['filename']
       FileUtils.cp(tmp.path, Helper.IMG_FOLDER)
       File.rename(Helper.IMG_FOLDER + oldName, Helper.IMG_FOLDER + newName)       
-      File.delete tmp.path
-      resp = {'image' => {'big' => newName, 'thumb' => 'small.jpg'}}
+      File.delete tmp.path 
+      Helper.resizeImage(Helper.IMG_FOLDER + newName) 
+      resp = {'image' => {'img' => newName}}
     else
       resp = valid_token
     end
