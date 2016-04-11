@@ -20,12 +20,14 @@ class Helper
             'pass_changed' => {'en' => 'Password changed', 'ru' => 'Пароль изменен'},
             'unknown' => {'en' => 'Error is unknown', 'ru' => 'Неизвестная ошибка'},
             'project_saved' => {'en' => 'Project was saved successfully', 'ru' => 'Проект был сохранен'},
-            'project_deleted' => {'en' => 'Project was deleted', 'ru' => 'Проект был удален'}
+            'project_deleted' => {'en' => 'Project was deleted', 'ru' => 'Проект был удален'},
+            'mail_length_limit' => {'en' => "EMail length exceeded the limit", 'ru' => "Длина EMail превысила лимит"}
          }
   @@TABLE_USERS = :users
   @@TABLE_PROJECTS = :projects
   @@DB_NAME = 'apartments'
   @@IMG_FOLDER = '/var/apartment_ui/public/images/'
+  @@MAX_MAIL_LENGTH = 32
   
   # def self.toJSON doc
     # return doc.to_s.gsub('BSON::','').gsub('"','\'').gsub('=>',':')    
@@ -51,6 +53,9 @@ class Helper
   end
   def self.IMG_FOLDER
     return @@IMG_FOLDER
+  end  
+  def self.MAX_MAIL_LENGTH
+    return @@MAX_MAIL_LENGTH
   end  
   
   def self.getTimeStamp

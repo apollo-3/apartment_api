@@ -87,16 +87,20 @@ class Users
     user.delete 'defLang'    
     user['lang'] = @def_lang
     resp = nil
-    obj = @db.con[Helper.TABLE_USERS].find(:mail => user[:mail])
-    if obj.count >= 1
-      resp = {'error' => Helper.MSGS['mail_exists'][@def_lang]}
+    if user[:mail].length > Helper.MAX_MAIL_LENGTH
+      resp = {'error' => Helper.MSGS['mail_length_limit'][@def_lang]}
     else
-      user[:verified] = false
-      user[:creation_date] = Time.now
-      user[:projects] = []
-      @db.con[:users].insert_one(user)
-      token = setToken user['mail']
-      resp = {'success' => Helper.MSGS['user_created'][@def_lang], 'verifing_url' => Helper.VERIFY_URL + "?mail=#{user[:mail]}&token=#{token}&action=verify"}
+      obj = @db.con[Helper.TABLE_USERS].find(:mail => user[:mail])
+      if obj.count >= 1
+        resp = {'error' => Helper.MSGS['mail_exists'][@def_lang]}
+      else
+        user[:verified] = false
+        user[:creation_date] = Time.now
+        user[:projects] = []
+        @db.con[:users].insert_one(user)
+        token = setToken user['mail']
+        resp = {'success' => Helper.MSGS['user_created'][@def_lang], 'verifing_url' => Helper.VERIFY_URL + "?mail=#{user[:mail]}&token=#{token}&action=verify"}
+      end
     end
     @db.close
     return resp
