@@ -5,11 +5,11 @@ class Helper
   @@LANGS = ['en', 'ru']
   @@MSGS = {
             'no_such_mail' => {'en' => 'There is no such email', 'ru' => 'Нет такой почты'},
-            'bad_pass' => {'en' => 'Password is wrong', 'ru' => 'Неверный пароль'},
+            'bad_pass' => {'en' => 'password is wrong', 'ru' => 'Неверный пароль'},
             'bad_token' => {'en' => 'Token has expired', 'ru' => 'Токен недействителен'},
             'user_deleted' => {'en' => 'User was deleted', 'ru' => 'Пользователь был удален'},
             'mail_exists' => {'en' => 'This email is already used', 'ru' => 'Данный адрес почты уже используется'},
-            'user_deleted' => {'en' => 'User was deleted', 'ru' => 'Пользователь удален'},
+            'user_deleted' => {'en' => 'user was deleted', 'ru' => 'Пользователь удален'},
             'user_updated' => {'en' => 'User was updated', 'ru' => 'Данные пользователя были изменены'},
             'user_created' => {'en' => 'User was created', 'ru' => 'Пользователь был зарегистрирован'},
             'not_verified' => {'en' => 'User is not verified', 'ru' => 'Пользователь не проверен'},
