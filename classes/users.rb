@@ -17,6 +17,17 @@ class Users
     obj.delete 'projects'
     return obj
   end
+  def userFilter user
+    user[:mail] = user[:mail][0..(Helper.MAX_MAIL_LENGTH-1)] if user[:mail].length > Helper.MAX_MAIL_LENGTH 
+    user[:name] = user[:name][0..(Helper.MAX_NAME_LENGTH-1)] if user[:name].length > Helper.MAX_NAME_LENGTH
+    user[:birthYear] = 0 if user[:birthYear] > Helper.MAX_BIRTH_YEAR
+    user[:phone] = user[:phone][0..(Helper.MAX_PHONE_LENGTH-1)] if user[:phone].length > Helper.MAX_PHONE_LENGTH
+    user[:country] = user[:country][0..(Helper.MAX_GEONAME_LENGTH-1)] if user[:country].length > Helper.MAX_GEONAME_LENGTH
+    user[:state] = user[:state][0..(Helper.MAX_GEONAME_LENGTH-1)] if user[:state].length > Helper.MAX_GEONAME_LENGTH
+    user[:city] = user[:city][0..(Helper.MAX_GEONAME_LENGTH-1)] if user[:city].length > Helper.MAX_GEONAME_LENGTH
+    user[:lang] = user[:lang][0..(Helper.MAX_LANG_LENGTH-1)] if user[:lang].length > Helper.MAX_LANG_LENGTH
+    return user
+  end  
   def setToken mail
     token = Digest::MD5.hexdigest "#{mail}.#{Time.now().to_i.to_s}" 
     @db.con[Helper.TABLE_USERS].find(:mail => mail).update_one({'$set' => {:token => token}})
@@ -117,7 +128,7 @@ class Users
           resp = {'success' => Helper.MSGS['pass_changed'][obj['lang']], 'user' => obj}
         end
       else      
-        result = @db.con[Helper.TABLE_USERS].update_one({:mail => user['mail'], :password => user['password']},{'$set' => user})
+        result = @db.con[Helper.TABLE_USERS].update_one({:mail => user['mail'], :password => user['password']},{'$set' => userFilter(user)})
         if result.n == 1        
           obj = Users.delExtraFields(@db.con[Helper.TABLE_USERS].find(:mail => user['mail']).first)
           resp ={'success' => Helper.MSGS['user_updated'][user[:lang]], 'user' => obj}

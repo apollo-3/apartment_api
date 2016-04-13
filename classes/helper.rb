@@ -28,6 +28,11 @@ class Helper
   @@DB_NAME = 'apartments'
   @@IMG_FOLDER = '/var/apartment_ui/public/images/'
   @@MAX_MAIL_LENGTH = 32
+  @@MAX_NAME_LENGTH = 32
+  @@MAX_BIRTH_YEAR = 2200
+  @@MAX_PHONE_LENGTH = 16
+  @@MAX_GEONAME_LENGTH = 32
+  @@MAX_LANG_LENGTH = 3
   
   # def self.toJSON doc
     # return doc.to_s.gsub('BSON::','').gsub('"','\'').gsub('=>',':')    
@@ -57,6 +62,21 @@ class Helper
   def self.MAX_MAIL_LENGTH
     return @@MAX_MAIL_LENGTH
   end  
+  def self.MAX_NAME_LENGTH
+    return @@MAX_NAME_LENGTH
+  end    
+  def self.MAX_BIRTH_YEAR
+    return @@MAX_BIRTH_YEAR
+  end   
+  def self.MAX_PHONE_LENGTH
+    return @@MAX_PHONE_LENGTH
+  end
+  def self.MAX_GEONAME_LENGTH
+    return @@MAX_GEONAME_LENGTH
+  end  
+  def self.MAX_LANG_LENGTH
+    return @@MAX_LANG_LENGTH
+  end    
   
   def self.getTimeStamp
     stamp = Time.now.to_s.gsub(/-| |:|\+/, '')[0..-5]
