@@ -92,10 +92,10 @@ class Projects
       Projects.delExtraFields project
       if project['shared'] 
         project['owners'].push(mail) if !project['owners'].include?(mail)
-        @db.con[Helper.TABLE_PROJECTS].insert_one(project)
+        @db.con[Helper.TABLE_PROJECTS].insert_one(projectFilter(project))
       else
         project['owners'] = [mail]
-        @db.con[Helper.TABLE_USERS].update_one({:mail => mail},{'$addToSet' => {:projects => project}})
+        @db.con[Helper.TABLE_USERS].update_one({:mail => mail},{'$addToSet' => {:projects => projectFilter(project)}})
       end
       resp = {'success' => Helper.MSGS['project_saved'][@def_lang], 'project' => project}
     else
@@ -142,5 +142,17 @@ class Projects
     end    
     @db.close
     return resp;
+  end
+  def projectFilter project
+    project[:name] = project[:name][0..(Helper.MAX_NAME_LENGTH-1)] if project[:name].length > Helper.MAX_NAME_LENGTH
+    project[:currency] = project[:currency][0..(Helper.MAX_CURRENCY_LENGTH-1)] if project[:currency].length > Helper.MAX_CURRENCY_LENGTH   
+    project[:rate] = project[:rate][0..(Helper.MAX_RATE_LENGTH-1)] if project[:rate].length > Helper.MAX_RATE_LENGTH
+    project[:description] = project[:description][0..(Helper.MAX_DESCRIPTION.LENGTH-1)] if project[:description].length > Helper.MAX_DESCRIPTION_LENGTH
+    i = 0
+    project[:owners].each do |owner|
+      project[:owners][i] = project[:owners][i][0..(Helper.MAX_MAIL_LENGTH - 1)] if owner.length > Helper.MAX_MAIL_LENGTH
+      i = i + 1      
+    end    
+    return project
   end
 end

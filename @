@@ -1,0 +1,8 @@
+def callback
+ yield 'man'
+end
+
+callback |item| 
+  puts 'hello'
+  puts item
+end
