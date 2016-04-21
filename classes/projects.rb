@@ -55,21 +55,21 @@ class Projects
       oldName = project['name']
       if was_shared
         if project['shared']        
-          @db.con[Helper.TABLE_PROJECTS].update_one({:owners => mail, :name => project[:name]}, project)
+          @db.con[Helper.TABLE_PROJECTS].update_one({:owners => mail, :name => project[:name]}, projectFilter(project))
         else
           project['name'] = getAvailableProjectName(mail, project['name'], project['shared'])        
           project['owners'] = [mail]
-          @db.con[Helper.TABLE_USERS].update_one({:mail => mail},{'$addToSet' => {'projects' => project}})
+          @db.con[Helper.TABLE_USERS].update_one({:mail => mail},{'$addToSet' => {'projects' => projectFilter(project)}})
           @db.con[Helper.TABLE_PROJECTS].delete_one({:owners => mail, :name => oldName})
         end
         resp = {'success' => 'ok'}       
       else
         if project['shared']
           project['name'] = getAvailableProjectName(mail, project['name'], project['shared'])
-          @db.con[Helper.TABLE_PROJECTS].insert_one(project)
+          @db.con[Helper.TABLE_PROJECTS].insert_one(projectFilter(project))
           @db.con[Helper.TABLE_USERS].update_one({:mail => mail},{'$pull' => {:projects => {'name' => oldName}}})           
         else
-          @db.con[Helper.TABLE_USERS].update_one({:mail => mail, :projects => {'$elemMatch' => {:name => project[:name]}}},{'$set' => {'projects.$' => project}})        
+          @db.con[Helper.TABLE_USERS].update_one({:mail => mail, :projects => {'$elemMatch' => {:name => project[:name]}}},{'$set' => {'projects.$' => projectFilter(project)}})        
         end
       end
       resp = {'success' => Helper.MSGS['project_saved'][@def_lang], 'project' => project}
@@ -152,7 +152,20 @@ class Projects
     project[:owners].each do |owner|
       project[:owners][i] = project[:owners][i][0..(Helper.MAX_MAIL_LENGTH - 1)] if owner.length > Helper.MAX_MAIL_LENGTH
       i = i + 1      
-    end    
+    end  
+    i = 0
+    project[:flats].each do |flat|
+      j = 0
+      flat[:phones].each do |phone|
+        project[:flats][i][:phones][j][:phone] = phone[:phone][0..(Helper.MAX_PHONE_LENGTH - 1)] if phone[:phone].length > Helper.MAX_PHONE_LENGTH
+        j = j + 1
+      end
+      i = i + 1
+      project[:flats][i][:address] = flat[:address][0..(Helper.MAX_ADDRESS_LENGTH - 1)] if flat[:address].length > Helper.MAX_ADDRESS_LENGTH
+      project[:flats][i][:link] = flat[:link][0..(Helper.MAX_LINK_LENGTH - 1)] if flat[:link].length > Helper.MAX_LINK_LENGTH      
+      project[:flats][i][:contact] = flat[:contact][0..(Helper.MAX_NAME_LENGTH - 1)] if flat[:contact].length > Helper.MAX_NAME_LENGTH            
+      project[:flats][i][:floor] = flat[:floor][0..(Helper.MAX_FLOOR_LENGTH - 1)] if flat[:floor].length > Helper.MAX_FLOOR_LENGTH
+    end
     return project
   end
 end

@@ -30,7 +30,7 @@ class Helper
   @@MAX_MAIL_LENGTH = 32
   @@MAX_NAME_LENGTH = 32
   @@MAX_BIRTH_YEAR = 2200
-  @@MAX_PHONE_LENGTH = 16
+  @@MAX_PHONE_LENGTH = 24
   @@MAX_GEONAME_LENGTH = 32  
   @@MAX_LANG_LENGTH = 3
   
@@ -38,6 +38,10 @@ class Helper
   @@MAX_RATE_LENGTH = 10  
   @@MAX_DESCRIPTION_LENGTH = 256
   @@MAX_CURRENCY_LENGTH = 3
+  
+  @@MAX_ADDRESS_LENGTH = 64
+  @@MAX_LINK_LENGTH = 64  
+  @@MAX_FLOOR_LENGTH = 3  
   
   # def self.toJSON doc
     # return doc.to_s.gsub('BSON::','').gsub('"','\'').gsub('=>',':')    
@@ -93,7 +97,16 @@ class Helper
   end 
   def self.MAX_CURRENCY_LENGTH
     return @@MAX_CURRENCY_LENGTH
-  end   
+  end 
+  def self.MAX_ADDRESS_LENGTH
+    return @@MAX_ADDRESS_LENGTH
+  end
+  def self.MAX_LINK_LENGTH
+    return @@MAX_LINK_LENGTH
+  end  
+  def self.MAX_FLOOR_LENGTH
+    return @@MAX_FLOOR_LENGTH
+  end    
   
   def self.getTimeStamp
     stamp = Time.now.to_s.gsub(/-| |:|\+/, '')[0..-5]
