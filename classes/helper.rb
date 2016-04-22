@@ -41,7 +41,8 @@ class Helper
   
   @@MAX_ADDRESS_LENGTH = 64
   @@MAX_LINK_LENGTH = 64  
-  @@MAX_FLOOR_LENGTH = 3  
+  @@MAX_FLOOR = 300
+  @@MAX_PRICE_LENGTH = 16
   
   # def self.toJSON doc
     # return doc.to_s.gsub('BSON::','').gsub('"','\'').gsub('=>',':')    
@@ -104,8 +105,11 @@ class Helper
   def self.MAX_LINK_LENGTH
     return @@MAX_LINK_LENGTH
   end  
-  def self.MAX_FLOOR_LENGTH
-    return @@MAX_FLOOR_LENGTH
+  def self.MAX_FLOOR
+    return @@MAX_FLOOR
+  end    
+  def self.MAX_PRICE_LENGTH
+    return @@MAX_PHONE_LENGTH
   end    
   
   def self.getTimeStamp

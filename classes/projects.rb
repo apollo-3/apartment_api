@@ -164,7 +164,9 @@ class Projects
       project[:flats][i][:address] = flat[:address][0..(Helper.MAX_ADDRESS_LENGTH - 1)] if flat[:address].length > Helper.MAX_ADDRESS_LENGTH
       project[:flats][i][:link] = flat[:link][0..(Helper.MAX_LINK_LENGTH - 1)] if flat[:link].length > Helper.MAX_LINK_LENGTH      
       project[:flats][i][:contact] = flat[:contact][0..(Helper.MAX_NAME_LENGTH - 1)] if flat[:contact].length > Helper.MAX_NAME_LENGTH            
-      project[:flats][i][:floor] = flat[:floor][0..(Helper.MAX_FLOOR_LENGTH - 1)] if flat[:floor].length > Helper.MAX_FLOOR_LENGTH
+      project[:flats][i][:floor] = 0 if flat[:floor] > Helper.MAX_FLOOR
+      project[:flats][i][:buildYear] = 0 if flat[:buildYear] > Helper.MAX_BIRTH_YEAR
+      project[:flats][i][:price] = 0 if flat[:price].to_s().length > Helper.MAX_PRICE_LENGTH
     end
     return project
   end
