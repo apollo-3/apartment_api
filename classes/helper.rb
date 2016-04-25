@@ -43,6 +43,8 @@ class Helper
   @@MAX_LINK_LENGTH = 64  
   @@MAX_FLOOR = 300
   @@MAX_PRICE_LENGTH = 16
+  @@MAX_STARS = 10
+  @@MAX_CALLHIST_LENGTH = 8  
   
   # def self.toJSON doc
     # return doc.to_s.gsub('BSON::','').gsub('"','\'').gsub('=>',':')    
@@ -111,6 +113,12 @@ class Helper
   def self.MAX_PRICE_LENGTH
     return @@MAX_PHONE_LENGTH
   end    
+  def self.MAX_STARS
+    return @@MAX_STARS
+  end   
+  def self.MAX_CALLHIST_LENGTH
+    return @@MAX_CALLHIST_LENGTH
+  end  
   
   def self.getTimeStamp
     stamp = Time.now.to_s.gsub(/-| |:|\+/, '')[0..-5]
