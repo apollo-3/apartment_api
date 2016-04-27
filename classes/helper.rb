@@ -1,7 +1,7 @@
 require 'rmagick'
 
 class Helper
-  @@VERIFY_URL = 'http://192.168.33.11/verify.html'
+  @@VERIFY_URL = 'http://192.168.33.123/verify.html'
   @@LANGS = ['en', 'ru']
   @@MSGS = {
             'no_such_mail' => {'en' => 'There is no such email', 'ru' => 'Нет такой почты'},
@@ -26,7 +26,7 @@ class Helper
   @@TABLE_USERS = :users
   @@TABLE_PROJECTS = :projects
   @@DB_NAME = 'apartments'
-  @@IMG_FOLDER = '/var/apartment_ui/public/images/'
+  @@IMG_FOLDER = '/var/apartment_ui/photos/'
   @@MAX_MAIL_LENGTH = 32
   @@MAX_NAME_LENGTH = 32
   @@MAX_BIRTH_YEAR = 2200

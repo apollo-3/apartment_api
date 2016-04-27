@@ -108,6 +108,7 @@ class Users
         user[:verified] = false
         user[:creation_date] = Time.now
         user[:projects] = []
+        user[:account] = 'standard'
         @db.con[:users].insert_one(user)
         token = setToken user['mail']
         resp = {'success' => Helper.MSGS['user_created'][@def_lang], 'verifing_url' => Helper.VERIFY_URL + "?mail=#{user[:mail]}&token=#{token}&action=verify"}

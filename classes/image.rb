@@ -25,7 +25,20 @@ class Image < Grape::API
     post '/delImage' do
       client = Images.new params[:defLang]
       return client.delImage params[:image], params[:mail], params[:token]
-    end     
+    end  
+
+    params do
+      requires :data, type: Hash do
+        requires :imgArr, type: Array
+        requires :mail, type: String
+        requires :token, type: String
+        requires :defLang, type: String      
+      end
+    end
+    post '/groupDelImage' do
+      client = Images.new params[:data][:defLang]
+      return client.groupDelImage params[:data][:imgArr], params[:data][:mail], params[:data][:token]
+    end
     
   end
 end

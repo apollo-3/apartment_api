@@ -46,4 +46,19 @@ class Images
     @db.close
     return resp    
   end
+  def groupDelImage imgArr, mail, token
+    resp = nil;
+    client = Users.new @def_lang
+    valid_token = client.checkToken(mail, token)
+    if valid_token.has_key? 'success'
+      imgArr.each do |img|
+        toDel = Helper.IMG_FOLDER + img
+        File.delete(toDel) if File.exist?(toDel)
+        resp = {'success' => 'ok'}
+      end
+    else
+      resp = vali_token
+    end
+    return resp
+  end
 end
