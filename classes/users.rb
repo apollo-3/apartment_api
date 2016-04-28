@@ -13,8 +13,7 @@ class Users
     obj.delete 'creation_date'
     obj.delete 'verified'
     obj.delete 'password'
-    obj.delete 'token'  
-    obj.delete 'projects'
+    obj.delete 'token'
     return obj
   end
   def userFilter user
@@ -122,6 +121,8 @@ class Users
     resp = {'error' => Helper.MSGS['bad_pass'][@def_lang]}
     valid_token = checkToken(user[:mail], user[:token])
     if valid_token.has_key?('success')
+      # Prevents changing account type
+      user[:account] = valid_token['user']['account'] if user[:account] != valid_token['user']['account']
       if user.has_key?('newPassword')
         result = @db.con[Helper.TABLE_USERS].update_one({:mail => user['mail'], :password => user['password']},{'$set' => {'password' => user['newPassword']}})
         if result.n == 1
@@ -200,6 +201,18 @@ class Users
   def getData mail, token
     @db.close
     return checkToken mail, token    
+  end
+  # Updates your account to some level
+  def levelUp mail, secret, level
+    resp = {'error' => Helper.MSGS['wrong_secret'][@def_lang]}
+    result = @db.con[Helper.TABLE_SECRETS].find({'mail' => mail, 'secret' => secret})
+    if result.count > 0
+      resp = {'success' => 'ok'}
+      @db.con[Helper.TABLE_USERS].update_one({'mail' => mail},{'$set' => {'account' => level}});
+      @db.con[Helper.TABLE_SECRETS].find({'mail' => mail}).delete_one
+    end
+    @db.close();
+    return resp
   end
   def closeDb
     @db.close

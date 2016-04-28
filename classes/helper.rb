@@ -1,7 +1,7 @@
 require 'rmagick'
 
 class Helper
-  @@VERIFY_URL = 'http://192.168.33.123/verify.html'
+  @@VERIFY_URL = 'http://192.168.33.123/utils.html#/utils'
   @@LANGS = ['en', 'ru']
   @@MSGS = {
             'no_such_mail' => {'en' => 'There is no such email', 'ru' => 'Нет такой почты'},
@@ -21,10 +21,12 @@ class Helper
             'unknown' => {'en' => 'Error is unknown', 'ru' => 'Неизвестная ошибка'},
             'project_saved' => {'en' => 'Project was saved successfully', 'ru' => 'Проект был сохранен'},
             'project_deleted' => {'en' => 'Project was deleted', 'ru' => 'Проект был удален'},
-            'mail_length_limit' => {'en' => "EMail length exceeded the limit", 'ru' => "Длина EMail превысила лимит"}
+            'mail_length_limit' => {'en' => "EMail length exceeded the limit", 'ru' => "Длина EMail превысила лимит"},
+            'wrong_secret' => {'en' => 'Secret is absent or incorrect', 'ru' => 'Отсутствует или неправильный секрет'}
          }
   @@TABLE_USERS = :users
   @@TABLE_PROJECTS = :projects
+  @@TABLE_SECRETS = :secrets
   @@DB_NAME = 'apartments'
   @@IMG_FOLDER = '/var/apartment_ui/photos/'
   @@MAX_MAIL_LENGTH = 32
@@ -45,6 +47,24 @@ class Helper
   @@MAX_PRICE_LENGTH = 16
   @@MAX_STARS = 10
   @@MAX_CALLHIST_LENGTH = 8  
+  
+  @@ACCOUNTS = {
+    'standard' => {
+      :projects => 2,
+      :flats => 10,
+      :photos => 4
+    },
+    'advanced' => {
+      :projects => 5,
+      :flats => 20,
+      :photos => 5    
+    },
+    'premium' => {
+      :projects => 10,
+      :flats => 30,
+      :photos => 7    
+    }
+  }
   
   # def self.toJSON doc
     # return doc.to_s.gsub('BSON::','').gsub('"','\'').gsub('=>',':')    
@@ -68,6 +88,9 @@ class Helper
   def self.TABLE_PROJECTS
     return @@TABLE_PROJECTS
   end
+  def self.TABLE_SECRETS
+    return @@TABLE_SECRETS
+  end   
   def self.IMG_FOLDER
     return @@IMG_FOLDER
   end  
@@ -119,6 +142,9 @@ class Helper
   def self.MAX_CALLHIST_LENGTH
     return @@MAX_CALLHIST_LENGTH
   end  
+  def self.ACCOUNTS
+    return @@ACCOUNTS
+  end
   
   def self.getTimeStamp
     stamp = Time.now.to_s.gsub(/-| |:|\+/, '')[0..-5]

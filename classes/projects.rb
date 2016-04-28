@@ -169,6 +169,7 @@ class Projects
       project[:flats][i][:price] = 0 if flat[:price].to_s().length > Helper.MAX_PRICE_LENGTH
       project[:flats][i][:callHistory] = 'toCall' if flat[:callHistory].length > Helper.MAX_CALLHIST_LENGTH      
       project[:flats][i][:stars] = 0 if flat[:stars] > Helper.MAX_STARS
+      # project[:flats][i][:images] = flat[:images][0..(Helper.ACCOUNTS[valid_token['account']][:photos] -1)] if flat[:images].length > Helper.ACCOUNTS[valid_token['account']][:photos]
     end
     return project
   end

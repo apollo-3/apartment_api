@@ -52,18 +52,22 @@ class Login < Grape::API
 
     params do
       requires :mail, type: String
-      requires :token, type: String
+      # requires :token, type: String
       requires :action, type: String
       requires :defLang, type: String
     end
     get '/verify' do
       client = Users.new params[:defLang]
+      resp = nil
       case params[:action]
       when 'verify'
         resp = client.setVerified params[:mail], params[:token]
       when 'reset'
         resp = client.resetPassword params[:mail], params[:token]
+      when 'levelup'
+        resp = client.levelUp params[:mail], params[:secret], params[:account]
       end
+      return resp
     end
     
     params do
