@@ -1,5 +1,7 @@
 require_relative 'db'
 require_relative 'helper'
+require_relative 'users'
+require_relative 'logger'
 require 'date'
 require 'time'
 
@@ -55,21 +57,21 @@ class Projects
       oldName = project['name']
       if was_shared
         if project['shared']        
-          @db.con[Helper.TABLE_PROJECTS].update_one({:owners => mail, :name => project[:name]}, projectFilter(project))
+          @db.con[Helper.TABLE_PROJECTS].update_one({:owners => mail, :name => project[:name]}, projectFilter(project, mail))
         else
           project['name'] = getAvailableProjectName(mail, project['name'], project['shared'])        
           project['owners'] = [mail]
-          @db.con[Helper.TABLE_USERS].update_one({:mail => mail},{'$addToSet' => {'projects' => projectFilter(project)}})
+          @db.con[Helper.TABLE_USERS].update_one({:mail => mail},{'$addToSet' => {'projects' => projectFilter(project, mail)}})
           @db.con[Helper.TABLE_PROJECTS].delete_one({:owners => mail, :name => oldName})
         end
         resp = {'success' => 'ok'}       
       else
         if project['shared']
           project['name'] = getAvailableProjectName(mail, project['name'], project['shared'])
-          @db.con[Helper.TABLE_PROJECTS].insert_one(projectFilter(project))
+          @db.con[Helper.TABLE_PROJECTS].insert_one(projectFilter(project, mail))
           @db.con[Helper.TABLE_USERS].update_one({:mail => mail},{'$pull' => {:projects => {'name' => oldName}}})           
         else
-          @db.con[Helper.TABLE_USERS].update_one({:mail => mail, :projects => {'$elemMatch' => {:name => project[:name]}}},{'$set' => {'projects.$' => projectFilter(project)}})        
+          @db.con[Helper.TABLE_USERS].update_one({:mail => mail, :projects => {'$elemMatch' => {:name => project[:name]}}},{'$set' => {'projects.$' => projectFilter(project, mail)}})        
         end
       end
       resp = {'success' => Helper.MSGS['project_saved'][@def_lang], 'project' => project}
@@ -85,6 +87,12 @@ class Projects
     mail = project[:mail]    
     valid_token = client.checkToken mail, project[:token]
     client.closeDb
+    # Filter Account Limits
+      projectsOverall = @db.con[Helper.TABLE_PROJECTS].find({:owners => mail}).count + valid_token['user']['projects'].length
+      if  projectsOverall >= Helper.ACCOUNTS[valid_token['user']['account']][:projects]
+        return resp
+      end
+    # Filter Account Limits ends
     project[:creation_date] = Time.now
     oldName = project['name']
     project['name'] = getAvailableProjectName(mail, project['name'], project['shared'])    
@@ -92,10 +100,10 @@ class Projects
       Projects.delExtraFields project
       if project['shared'] 
         project['owners'].push(mail) if !project['owners'].include?(mail)
-        @db.con[Helper.TABLE_PROJECTS].insert_one(projectFilter(project))
+        @db.con[Helper.TABLE_PROJECTS].insert_one(projectFilter(project, mail))
       else
         project['owners'] = [mail]
-        @db.con[Helper.TABLE_USERS].update_one({:mail => mail},{'$addToSet' => {:projects => projectFilter(project)}})
+        @db.con[Helper.TABLE_USERS].update_one({:mail => mail},{'$addToSet' => {:projects => projectFilter(project, mail)}})
       end
       resp = {'success' => Helper.MSGS['project_saved'][@def_lang], 'project' => project}
     else
@@ -143,7 +151,11 @@ class Projects
     @db.close
     return resp;
   end
-  def projectFilter project
+  def projectFilter project, mail
+    userClient = Users.new @def_lang
+    obj = userClient.getUserInfo mail
+    userClient.closeDb()
+    
     project[:name] = project[:name][0..(Helper.MAX_NAME_LENGTH-1)] if project[:name].length > Helper.MAX_NAME_LENGTH
     project[:currency] = project[:currency][0..(Helper.MAX_CURRENCY_LENGTH-1)] if project[:currency].length > Helper.MAX_CURRENCY_LENGTH   
     project[:rate] = project[:rate][0..(Helper.MAX_RATE_LENGTH-1)] if project[:rate].length > Helper.MAX_RATE_LENGTH
@@ -154,13 +166,16 @@ class Projects
       i = i + 1      
     end  
     i = 0
+    # Filter Account Limits
+    project[:flats] = project[:flats][0..(Helper.ACCOUNTS[obj['user']['account']][:flats] - 1)] if project[:flats].length > Helper.ACCOUNTS[obj['user']['account']][:flats]
+    # Filter Account Limits ends
     project[:flats].each do |flat|
       j = 0
+      
       flat[:phones].each do |phone|
         project[:flats][i][:phones][j][:phone] = phone[:phone][0..(Helper.MAX_PHONE_LENGTH - 1)] if phone[:phone].length > Helper.MAX_PHONE_LENGTH
         j = j + 1
       end
-      i = i + 1
       project[:flats][i][:address] = flat[:address][0..(Helper.MAX_ADDRESS_LENGTH - 1)] if flat[:address].length > Helper.MAX_ADDRESS_LENGTH
       project[:flats][i][:link] = flat[:link][0..(Helper.MAX_LINK_LENGTH - 1)] if flat[:link].length > Helper.MAX_LINK_LENGTH      
       project[:flats][i][:contact] = flat[:contact][0..(Helper.MAX_NAME_LENGTH - 1)] if flat[:contact].length > Helper.MAX_NAME_LENGTH            
@@ -169,7 +184,10 @@ class Projects
       project[:flats][i][:price] = 0 if flat[:price].to_s().length > Helper.MAX_PRICE_LENGTH
       project[:flats][i][:callHistory] = 'toCall' if flat[:callHistory].length > Helper.MAX_CALLHIST_LENGTH      
       project[:flats][i][:stars] = 0 if flat[:stars] > Helper.MAX_STARS
-      # project[:flats][i][:images] = flat[:images][0..(Helper.ACCOUNTS[valid_token['account']][:photos] -1)] if flat[:images].length > Helper.ACCOUNTS[valid_token['account']][:photos]
+      # Filter Account Limits
+      project[:flats][i][:images] = flat[:images][0..(Helper.ACCOUNTS[obj['user']['account']][:photos] - 1)] if flat[:images].length > Helper.ACCOUNTS[obj['user']['account']][:photos]      
+      # Filter Account Limits ends      
+      i = i + 1      
     end
     return project
   end

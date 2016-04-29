@@ -202,6 +202,17 @@ class Users
     @db.close
     return checkToken mail, token    
   end
+  def getUserInfo mail
+    resp = nil
+    obj = @db.con[Helper.TABLE_USERS].find({'mail' => mail})
+    if obj.count > 0
+      obj = obj.first
+      resp = {'success' => 'ok', 'user' => Users.delExtraFields(obj)}
+    else
+      resp = {'error' => Helper.MSGS['no_such_mail'][@def_lang]}
+    end
+    return resp
+  end
   # Updates your account to some level
   def levelUp mail, secret, level
     resp = {'error' => Helper.MSGS['wrong_secret'][@def_lang]}

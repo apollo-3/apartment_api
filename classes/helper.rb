@@ -60,9 +60,9 @@ class Helper
       :photos => 5    
     },
     'premium' => {
-      :projects => 10,
+      :projects => 30,
       :flats => 30,
-      :photos => 7    
+      :photos => 8    
     }
   }
   
