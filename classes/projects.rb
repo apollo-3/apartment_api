@@ -4,6 +4,7 @@ require_relative 'users'
 require_relative 'logger'
 require 'date'
 require 'time'
+require 'csv'
 
 class Projects
   def initialize defLang
@@ -190,5 +191,76 @@ class Projects
       i = i + 1      
     end
     return project
+  end
+  def downloadProject mail, token, shared, name
+    resp = {'error' => Helper.MSGS['unknown'][@def_lang]}
+    client = Users.new @def_lang
+    valid_token = client.checkToken mail, token
+    client.closeDb
+    if valid_token.has_key? 'success'
+      doc = nil
+      out = []
+      if shared
+        doc = @db.con[Helper.TABLE_PROJECTS].find({'owners' => mail, 'name' => name})        
+      else
+        doc = @db.con[Helper.TABLE_USERS].aggregate([{:$unwind => '$projects'},{:$match => {'mail' => mail, 'projects.name' => name}},{:$project => {'flats' => '$projects.flats'}}])             
+      end
+      if doc != nil && doc.count > 0
+        heads = [
+          Helper.TRANSLATIONS['address'][valid_token['user']['lang']].capitalize,
+          Helper.TRANSLATIONS['contact'][valid_token['user']['lang']].capitalize,
+          Helper.TRANSLATIONS['phones'][valid_token['user']['lang']].capitalize,
+          Helper.TRANSLATIONS['price'][valid_token['user']['lang']].capitalize,          
+          Helper.TRANSLATIONS['buildYear'][valid_token['user']['lang']].capitalize,
+          Helper.TRANSLATIONS['floor'][valid_token['user']['lang']].capitalize,          
+          Helper.TRANSLATIONS['callHistory'][valid_token['user']['lang']].capitalize,
+          Helper.TRANSLATIONS['stars'][valid_token['user']['lang']].capitalize,
+          Helper.TRANSLATIONS['link'][valid_token['user']['lang']].capitalize,
+          Helper.TRANSLATIONS['owner'][valid_token['user']['lang']].capitalize,
+          Helper.TRANSLATIONS['subway'][valid_token['user']['lang']].capitalize,
+          Helper.TRANSLATIONS['shop'][valid_token['user']['lang']].capitalize,          
+          Helper.TRANSLATIONS['park'][valid_token['user']['lang']].capitalize,
+          Helper.TRANSLATIONS['school'][valid_token['user']['lang']].capitalize, 
+          Helper.TRANSLATIONS['daycare'][valid_token['user']['lang']].capitalize,
+          Helper.TRANSLATIONS['furniture'][valid_token['user']['lang']].capitalize,
+          Helper.TRANSLATIONS['electronics'][valid_token['user']['lang']].capitalize,
+          Helper.TRANSLATIONS['lastfloor'][valid_token['user']['lang']].capitalize,
+          Helper.TRANSLATIONS['modified'][valid_token['user']['lang']].capitalize          
+        ]
+        out.push heads        
+        doc.first[:flats].each do |flat|        
+          row = []
+          row.push flat[:address]
+          row.push flat[:contact]
+          phones = ''
+          flat[:phones].each { |phone| phones = "#{phones}#{phone['phone']}, " }
+          row.push phones.gsub(/, $/, '')
+          row.push flat[:price]
+          row.push flat[:buildYear]
+          row.push flat[:floor]
+          row.push Helper.TRANSLATIONS[flat[:callHistory]][valid_token['user']['lang']]
+          row.push flat[:stars]
+          row.push flat[:link]
+          row.push (flat[:owner] == true ? '+' : '-')
+          row.push (flat[:subway] == true ? '+' : '-')
+          row.push (flat[:shop] == true ? '+' : '-')          
+          row.push (flat[:park] == true ? '+' : '-')          
+          row.push (flat[:school] == true ? '+' : '-')         
+          row.push (flat[:daycare] == true ? '+' : '-')          
+          row.push (flat[:furniture] == true ? '+' : '-')
+          row.push (flat[:electronics] == true ? '+' : '-')          
+          row.push (flat[:lastfloor] == true ? '+' : '-')
+          row.push flat[:modified]          
+          out.push row
+        end
+        CSV.open("#{Helper.REPORT_FOLDER}/#{mail}.csv", 'w') do |csv|
+          out.each do |row|
+            csv << row
+          end
+        end
+        resp = {'success' => 'ok'}
+      end
+    end
+    return resp
   end
 end

@@ -16,6 +16,18 @@ class Project < Grape::API
     end
     
     params do
+      requires :mail, type: String
+      requires :token, type: String
+      requires :shared, type: Boolean
+      requires :name, type: String
+      requires :defLang, type: String
+    end    
+    post '/downloadReport' do
+      client = Projects.new params[:defLang]
+      return client.downloadProject params[:mail], params[:token], params[:shared], params[:name]
+    end
+    
+    params do
       requires :project, type: Hash do
         requires :mail, type: String
         requires :token, type: String

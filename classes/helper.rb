@@ -24,11 +24,36 @@ class Helper
             'mail_length_limit' => {'en' => "EMail length exceeded the limit", 'ru' => "Длина EMail превысила лимит"},
             'wrong_secret' => {'en' => 'Secret is absent or incorrect', 'ru' => 'Отсутствует или неправильный секрет'}
          }
+  @@TRANSLATIONS = {
+    'address' => {'en' => 'address', 'ru' => 'адрес'},
+    'contact' => {'en' => 'contact', 'ru' => 'контакт'},
+    'phones' => {'en' => 'phones', 'ru' => 'телефоны'},
+    'price' => {'en' => 'price', 'ru' => 'год'},
+    'floor' => {'en' => 'floor', 'ru' => 'этаж'},
+    'buildYear' => {'en' => 'year', 'ru' => 'год'},      
+    'callHistory' => {'en' => 'call', 'ru' => 'звонок'},
+    'stars' => {'en' => 'rate', 'ru' => 'рейтинг'},
+    'link' => {'en' => 'link', 'ru' => 'ссылка'},
+    'modified' => {'en' => 'modified', 'ru' => 'изменен'},
+    'owner' => {'en' => 'owner', 'ru' => 'владелец'},    
+    'subway' => {'en' => 'subway', 'ru' => 'метро'},    
+    'shop' => {'en' => 'shop', 'ru' => 'магазин'},
+    'park' => {'en' => 'park', 'ru' => 'парк'},    
+    'school' => {'en' => 'school', 'ru' => 'школа'},    
+    'daycare' => {'en' => 'daycare', 'ru' => 'детский сад'},
+    'furniture' => {'en' => 'furniture', 'ru' => 'мебель'},    
+    'electronics' => {'en' => 'electronics', 'ru' => 'техника'},    
+    'lastfloor' => {'en' => 'last floor', 'ru' => 'последний  этаж'},
+    'toCall' => {'en' => 'to call', 'ru' => 'позвонить'},
+    'called' => {'en' => 'called', 'ru' => 'звонил'},    
+    'callBack' => {'en' => 'called', 'ru' => 'перезвонить'}
+  }
   @@TABLE_USERS = :users
   @@TABLE_PROJECTS = :projects
   @@TABLE_SECRETS = :secrets
   @@DB_NAME = 'apartments'
   @@IMG_FOLDER = '/var/apartment_ui/photos/'
+  @@REPORT_FOLDER = '/var/apartment_ui/reports/'
   @@MAX_MAIL_LENGTH = 32
   @@MAX_NAME_LENGTH = 32
   @@MAX_BIRTH_YEAR = 2200
@@ -94,6 +119,9 @@ class Helper
   def self.IMG_FOLDER
     return @@IMG_FOLDER
   end  
+  def self.REPORT_FOLDER
+    return @@REPORT_FOLDER
+  end    
   def self.MAX_MAIL_LENGTH
     return @@MAX_MAIL_LENGTH
   end  
@@ -145,6 +173,9 @@ class Helper
   def self.ACCOUNTS
     return @@ACCOUNTS
   end
+  def self.TRANSLATIONS
+    return @@TRANSLATIONS
+  end  
   
   def self.getTimeStamp
     stamp = Time.now.to_s.gsub(/-| |:|\+/, '')[0..-5]
