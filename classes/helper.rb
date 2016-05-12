@@ -77,17 +77,20 @@ class Helper
     'standard' => {
       :projects => 2,
       :flats => 10,
-      :photos => 4
+      :photos => 4,
+      :logs => 1
     },
     'advanced' => {
       :projects => 5,
       :flats => 20,
-      :photos => 5    
+      :photos => 5,
+      :logs => 10
     },
     'premium' => {
       :projects => 30,
       :flats => 30,
-      :photos => 8    
+      :photos => 8,
+      :log => 20
     }
   }
   

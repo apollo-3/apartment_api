@@ -186,7 +186,8 @@ class Projects
       project[:flats][i][:callHistory] = 'toCall' if flat[:callHistory].length > Helper.MAX_CALLHIST_LENGTH      
       project[:flats][i][:stars] = 0 if flat[:stars] > Helper.MAX_STARS
       # Filter Account Limits
-      project[:flats][i][:images] = flat[:images][0..(Helper.ACCOUNTS[obj['user']['account']][:photos] - 1)] if flat[:images].length > Helper.ACCOUNTS[obj['user']['account']][:photos]      
+      project[:flats][i][:images] = flat[:images][0..(Helper.ACCOUNTS[obj['user']['account']][:photos] - 1)] if flat[:images].length > Helper.ACCOUNTS[obj['user']['account']][:photos]
+      project[:flats][i][:logs] = flat[:logs][0..(Helper.ACCOUNTS[obj['user']['account']][:logs] - 1)] if flat[:logs].length > Helper.ACCOUNTS[obj['user']['account']][:logs]
       # Filter Account Limits ends      
       i = i + 1      
     end
