@@ -90,7 +90,7 @@ class Helper
       :projects => 30,
       :flats => 30,
       :photos => 8,
-      :log => 20
+      :logs => 20
     }
   }
   

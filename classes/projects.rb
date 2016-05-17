@@ -187,6 +187,8 @@ class Projects
       project[:flats][i][:stars] = 0 if flat[:stars] > Helper.MAX_STARS
       # Filter Account Limits
       project[:flats][i][:images] = flat[:images][0..(Helper.ACCOUNTS[obj['user']['account']][:photos] - 1)] if flat[:images].length > Helper.ACCOUNTS[obj['user']['account']][:photos]
+      Logger.write(flat[:logs].length.to_s)
+      Logger.write(Helper.ACCOUNTS[obj['user']['account']][:logs].to_s)
       project[:flats][i][:logs] = flat[:logs][0..(Helper.ACCOUNTS[obj['user']['account']][:logs] - 1)] if flat[:logs].length > Helper.ACCOUNTS[obj['user']['account']][:logs]
       # Filter Account Limits ends      
       i = i + 1      
