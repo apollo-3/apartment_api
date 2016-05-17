@@ -183,7 +183,7 @@ class Users
     valid_token = checkToken mail, token
     if valid_token.has_key? 'success'
       objs = @db.con[Helper.TABLE_USERS].find({:verified => true}).projection({:mail => 1, '_id' => 0})
-      if objs.count > 1
+      if objs.count >= 1
         out = []
         objs.each do |item|
           out.push item[:mail]
