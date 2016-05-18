@@ -2,6 +2,7 @@ require 'digest'
 require 'net/smtp'
 require_relative 'db'
 require_relative 'helper'
+require_relative 'mailsender'
 
 class Users
   def initialize defLang
@@ -119,17 +120,16 @@ class Users
         resp = {'success' => 'ok'}
         verify_link = Helper.VERIFY_URL + "?mail=#{user[:mail]}&token=#{token}&action=verify"
         subject = Helper.MSGS['activate_account'][user['lang']]
+        Logger.write(subject + ' ' + verify_link)
         full_msg = Helper.MSGS['activate_msg'][user['lang']]
         message = <<-MESSAGE_END
 From: estate-hunt.com admin <admin@estate-hunt.com>
-To: #{user['mail']}
+To: <#{user['mail']}>
 Subject: #{subject}
 
 #{full_msg}: #{verify_link}
 MESSAGE_END
-        Net::SMTP.start('localhost') do |smtp|
-          smtp.send_message message, 'admin@estate-hunt.com', user['mail']
-        end
+        Mailsender.new({:to => user['mail'], :from => 'admin@estate-hunt.com', :message => message}).send
       end
     end
     @db.close
