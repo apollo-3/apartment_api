@@ -7,7 +7,7 @@ class Mailsender
   end
   def send
     Net::SMTP.start('localhost') do |smtp|
-      smtp.send_message message, @from, @to
+      smtp.send_message @message, @from, @to
     end    
   end
 end
