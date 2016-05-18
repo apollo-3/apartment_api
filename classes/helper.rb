@@ -22,7 +22,9 @@ class Helper
             'project_saved' => {'en' => 'Project was saved successfully', 'ru' => 'Проект был сохранен'},
             'project_deleted' => {'en' => 'Project was deleted', 'ru' => 'Проект был удален'},
             'mail_length_limit' => {'en' => "EMail length exceeded the limit", 'ru' => "Длина EMail превысила лимит"},
-            'wrong_secret' => {'en' => 'Secret is absent or incorrect', 'ru' => 'Отсутствует или неправильный секрет'}
+            'wrong_secret' => {'en' => 'Secret is absent or incorrect', 'ru' => 'Отсутствует или неправильный секрет'},
+            'activate_account' => {'en' => 'Activation instructions', 'ru' => 'Активация аккаунта'},
+            'activate_msg' => {'en' => 'Please follow the link to activate your account', 'ru' => 'Пожалуйста проследуйте по ссылке, чтобы активировать свой аккаунт'}
          }
   @@TRANSLATIONS = {
     'address' => {'en' => 'address', 'ru' => 'адрес'},

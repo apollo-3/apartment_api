@@ -1,4 +1,5 @@
 require 'digest'
+require 'net/smtp'
 require_relative 'db'
 require_relative 'helper'
 
@@ -110,7 +111,25 @@ class Users
         user[:account] = 'standard'
         @db.con[:users].insert_one(user)
         token = setToken user['mail']
-        resp = {'success' => Helper.MSGS['user_created'][@def_lang], 'verifing_url' => Helper.VERIFY_URL + "?mail=#{user[:mail]}&token=#{token}&action=verify"}
+        
+        # Development part without sending an email
+        # resp = {'success' => Helper.MSGS['user_created'][@def_lang], 'verifing_url' => Helper.VERIFY_URL + "?mail=#{user[:mail]}&token=#{token}&action=verify"}
+        
+        # Production part with sending an email
+        resp = {'success' => 'ok'}
+        verify_link = Helper.VERIFY_URL + "?mail=#{user[:mail]}&token=#{token}&action=verify"
+        subject = Helper.MSGS['activate_account'][user['lang']]
+        full_msg = Helper.MSGS['activate_msg'][user['lang']]
+        message = <<-MESSAGE_END
+From: estate-hunt.com admin <admin@estate-hunt.com>
+To: #{user['mail']}
+Subject: #{subject}
+
+#{full_msg}: #{verify_link}
+MESSAGE_END
+        Net::SMTP.start('localhost') do |smtp|
+          smtp.send_message message, 'admin@estate-hunt.com', user['mail']
+        end
       end
     end
     @db.close
