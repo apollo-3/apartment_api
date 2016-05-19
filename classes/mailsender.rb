@@ -6,8 +6,12 @@ class Mailsender
     @message = opts[:message]
   end
   def send
+    begin  
     Net::SMTP.start('localhost') do |smtp|
       smtp.send_message @message, @from, @to
-    end    
+    end
+    rescue Exception
+      Logger.write(@message);
+    end
   end
 end
