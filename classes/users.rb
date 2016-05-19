@@ -244,6 +244,10 @@ MESSAGE_END
     @db.close();
     return resp
   end
+  def getUsersNum
+    @db.close
+    return {'success' => 'ok', 'size' => @db.con[Helper.TABLE_USERS].find({}).count}
+  end
   def closeDb
     @db.close
   end
