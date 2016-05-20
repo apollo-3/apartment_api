@@ -80,7 +80,7 @@ class Helper
       :projects => 2,
       :flats => 10,
       :photos => 4,
-      :logs => 1
+      :logs => 2
     },
     'advanced' => {
       :projects => 5,
