@@ -123,13 +123,13 @@ class Users
         # Logger.write(verify_link)
         full_msg = Helper.MSGS['activate_msg'][user['lang']]
         message = <<-MESSAGE_END
-From: estate-hunt.com admin <admin@estate-hunt.com>
+From: estate-hunt.com admin <#{Helper.ADMIN_MAIL}>
 To: <#{user['mail']}>
 Subject: #{subject}
 
 #{full_msg}: #{verify_link}
 MESSAGE_END
-        Mailsender.new({:to => user['mail'], :from => 'admin@estate-hunt.com', :message => message}).send
+        Mailsender.new({:to => user['mail'], :from => Helper.ADMIN_MAIL, :message => message}).send
       end
     end
     @db.close
@@ -184,14 +184,14 @@ MESSAGE_END
         subject = Helper.MSGS['reset_password'][obj['lang']]
         full_msg = Helper.MSGS['reset_msg'][obj['lang']]
         message = <<-MESSAGE_END
-From: estate-hunt.com admin <admin@estate-hunt.com>
+From: estate-hunt.com admin <#{Helper.ADMIN_MAIL}>
 To: <#{mail}>
 Subject: #{subject}
 
 #{full_msg}: #{verify_link}
 MESSAGE_END
         # Logger.write(verify_link)
-        Mailsender.new({:to => mail, :from => 'admin@estate-hunt.com', :message => message}).send
+        Mailsender.new({:to => mail, :from => Helper.ADMIN_MAIL, :message => message}).send
         resp = {'success' => Helper.MSGS['request_reset'][obj[:lang]]}
       end
     else

@@ -75,7 +75,9 @@ class Helper
   @@MAX_FLOOR = 300
   @@MAX_PRICE_LENGTH = 16
   @@MAX_STARS = 10
-  @@MAX_CALLHIST_LENGTH = 8  
+  @@MAX_CALLHIST_LENGTH = 8
+
+  @@ADMIN_MAIL = 'admin@estate-hunt.com'  
   
   @@ACCOUNTS = {
     'standard' => {
@@ -183,6 +185,9 @@ class Helper
   def self.TRANSLATIONS
     return @@TRANSLATIONS
   end  
+  def self.ADMIN_MAIL
+    return @@ADMIN_MAIL
+  end   
   
   def self.getTimeStamp
     stamp = Time.now.to_s.gsub(/-| |:|\+/, '')[0..-5]
