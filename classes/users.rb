@@ -120,7 +120,7 @@ class Users
         resp = {'success' => 'ok'}
         verify_link = Helper.VERIFY_URL + "?mail=#{user[:mail]}&token=#{token}&action=verify"
         subject = Helper.MSGS['activate_account'][user['lang']]
-        Logger.write(subject + ' ' + verify_link)
+        # Logger.write(verify_link)
         full_msg = Helper.MSGS['activate_msg'][user['lang']]
         message = <<-MESSAGE_END
 From: estate-hunt.com admin <admin@estate-hunt.com>
@@ -178,7 +178,21 @@ MESSAGE_END
         resp = {'error' => Helper.MSGS['cant_reset'][obj[:lang]]}        
       else
         token = setToken mail
-        resp = {'success' => Helper.MSGS['request_reset'][obj[:lang]], 'reset_url' => Helper.VERIFY_URL + "?mail=#{mail}&token=#{token}&action=reset"}
+        # Development part without sending out emails
+        # resp = {'success' => Helper.MSGS['request_reset'][obj[:lang]], 'reset_url' => Helper.VERIFY_URL + "?mail=#{mail}&token=#{token}&action=reset"}
+        verify_link = Helper.VERIFY_URL + "?mail=#{mail}&token=#{token}&action=reset"        
+        subject = Helper.MSGS['reset_password'][obj['lang']]
+        full_msg = Helper.MSGS['reset_msg'][obj['lang']]
+        message = <<-MESSAGE_END
+From: estate-hunt.com admin <admin@estate-hunt.com>
+To: <#{mail}>
+Subject: #{subject}
+
+#{full_msg}: #{verify_link}
+MESSAGE_END
+        # Logger.write(verify_link)
+        Mailsender.new({:to => mail, :from => 'admin@estate-hunt.com', :message => message}).send
+        resp = {'success' => Helper.MSGS['request_reset'][obj[:lang]]}
       end
     else
       resp = {'error' => Helper.MSGS['no_such_mail'][@def_lang]}

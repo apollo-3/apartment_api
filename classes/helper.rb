@@ -24,7 +24,9 @@ class Helper
             'mail_length_limit' => {'en' => "EMail length exceeded the limit", 'ru' => "Длина EMail превысила лимит"},
             'wrong_secret' => {'en' => 'Secret is absent or incorrect', 'ru' => 'Отсутствует или неправильный секрет'},
             'activate_account' => {'en' => 'Activation instructions', 'ru' => 'Активация аккаунта'},
-            'activate_msg' => {'en' => 'Please follow the link to activate your account', 'ru' => 'Пожалуйста проследуйте по ссылке, чтобы активировать свой аккаунт'}
+            'activate_msg' => {'en' => 'Please follow the link to activate your account', 'ru' => 'Пожалуйста проследуйте по ссылке, чтобы активировать свой аккаунт'},
+            'reset_password' => {'en' => 'Reset instructions', 'ru' => 'Инструкция по сбросу пароля'},
+            'reset_msg' => {'en' => 'Follow the next url to get your temporaty password and change it right away', 'ru' => 'Проследуйте по ссылке, чтобы получить временный пароль и сразу же измените его'}
          }
   @@TRANSLATIONS = {
     'address' => {'en' => 'address', 'ru' => 'адрес'},
