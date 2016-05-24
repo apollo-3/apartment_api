@@ -87,6 +87,15 @@ class Users
         resp = {'error' => Helper.MSGS['bad_pass'][@def_lang]}
       else
         @db.con[Helper.TABLE_USERS].find(:mail => user[:mail]).delete_one
+        prjs = @db.con[Helper.TABLE_PROJECTS].find(:owners => user[:mail])
+        # Removing related projects or pulling the user from them
+        prjs.each do |prj|
+          if prj['owners'].length == 1
+            @db.con[Helper.TABLE_PROJECTS].delete_one prj
+          else
+            @db.con[Helper.TABLE_PROJECTS].update_one(prj, {'$pull' => {:owners => user[:mail]}})
+          end
+        end
         resp = {'success' => Helper.MSGS['user_deleted'][@def_lang]}
       end
     else
@@ -109,7 +118,7 @@ class Users
         user[:verified] = false
         user[:creation_date] = Time.now
         user[:projects] = []
-        user[:account] = 'standard'
+        user[:account] = 'promo'
         @db.con[:users].insert_one(user)
         token = setToken user['mail']
         
